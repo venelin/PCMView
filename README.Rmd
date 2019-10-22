@@ -1,0 +1,41 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# PCMView
+
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.com/venelin/PCMView.svg?branch=master)](https://travis-ci.com/venelin/PCMView)
+<!-- badges: end -->
+
+The goal of PCMView is to provide visualization functions for various objects generated with the R-packages PCMBase and PCMFit.
+
+## Installation
+
+You can install the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("venelin/PCMView")
+```
+## Example
+
+Here is how to plot the search path from a recurisive clade partition run:
+
+```{r PlotRCPHistory, warning=FALSE}
+library(PCMView)
+
+lstPlots <- PlotRCPHistory(
+   fitBMWithShiftsToMammalData, layout = "fan")
+cowplot::plot_grid(plotlist = lstPlots[!sapply(lstPlots, is.null)])
+```
