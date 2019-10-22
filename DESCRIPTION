@@ -31,6 +31,7 @@ Suggests:
   rmarkdown, 
   cowplot, 
   BiocManager
+Remotes: github::venelin/PCMFit
 RoxygenNote: 6.1.1
 ByteCompile: yes
 VignetteBuilder: knitr, rmarkdown
