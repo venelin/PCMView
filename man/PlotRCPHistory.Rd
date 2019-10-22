@@ -14,7 +14,7 @@ PlotRCPHistory(fit, sizeGreyNodepoints = 2.2,
 \item{fit}{an object of S3 class `PCMFitModelMappings` returned by a call
 to `PCMFitMixed`.}
 
-\item{sizeGreyNodepoints, sizeColorNodepoints, sizeBlackAllowedModelTypes, sizeColorAllowedModelTypes, sizeRankInQueue, vjustBlackAllowed, vjustColorAllowedModelTypes}{graphical parameters (see function description).}
+\item{sizeGreyNodepoints, sizeColorNodepoints, sizeBlackAllowedModelTypes, sizeColorAllowedModelTypes, sizeRankInQueue, vjustBlackAllowedModelTypes, vjustColorAllowedModelTypes}{graphical parameters (see function description).}
 
 \item{...}{additional parameters passed to \code{\link{PCMTreePlot}}.}
 }
@@ -39,7 +39,7 @@ on top showing:
 }
 \examples{
 lstPlots <- PlotRCPHistory(
-  fitMappings_MGPM_B_best_clade_2_DataWithSEs, layout = "fan")
+  fitBMWithShiftsToMammalData, layout = "fan")
 cowplot::plot_grid(plotlist = lstPlots[!sapply(lstPlots, is.null)])
 
 }

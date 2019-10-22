@@ -22,12 +22,13 @@ Depends:
 Imports: 
   PCMBase, 
   PCMFit, 
-  ggplot2
+  ggplot2,
+  ggtree,
+  data.table
 Suggests: 
   testthat, 
   knitr, 
   rmarkdown, 
-  ggtree, 
   cowplot, 
   BiocManager
 RoxygenNote: 6.1.1

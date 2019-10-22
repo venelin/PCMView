@@ -14,30 +14,37 @@
 #' }
 #' @param fit an object of S3 class `PCMFitModelMappings` returned by a call
 #'   to `PCMFitMixed`.
-#' @param sizeGreyNodepoints,sizeColorNodepoints,sizeBlackAllowedModelTypes,sizeColorAllowedModelTypes,sizeRankInQueue,vjustBlackAllowed,vjustColorAllowedModelTypes graphical parameters (see function description).
+#' @param sizeGreyNodepoints,sizeColorNodepoints,sizeBlackAllowedModelTypes,sizeColorAllowedModelTypes,sizeRankInQueue,vjustBlackAllowedModelTypes,vjustColorAllowedModelTypes
+#' graphical parameters (see function description).
 #' @param ... additional parameters passed to \code{\link{PCMTreePlot}}.
 #' @return a list of annotated ggtree plots. Some of the entries in this list
 #' can be NULL to indicate that no score improvement has been achieved at the
 #' corresponding iteration. The example below shows how to filter these out.
 #'
-#' @importFrom data.table data.table setkey
+#' @importFrom data.table data.table setkey :=
+#' @importFrom ggtree geom_nodepoint %<+%
+#' @importFrom ggplot2 ggtitle geom_text aes
 #' @import PCMBase
 #' @import PCMFit
-#' @import ggtree
-#' @import ggplot2
 #'
 #' @examples
 #' lstPlots <- PlotRCPHistory(
-#'   fitMappings_MGPM_B_best_clade_2_DataWithSEs, layout = "fan")
+#'   fitBMWithShiftsToMammalData, layout = "fan")
 #' cowplot::plot_grid(plotlist = lstPlots[!sapply(lstPlots, is.null)])
 #'
 #' @export
 PlotRCPHistory <- function(
   fit,
   sizeGreyNodepoints = 2.2, sizeColorNodepoints = 2.2,
-  sizeBlackAllowedModelTypes = 1.4, sizeColorAllowedModelTypes = 1.4, sizeRankInQueue = 1.4,
+  sizeBlackAllowedModelTypes = 1.4, sizeColorAllowedModelTypes = 1.4,
+  sizeRankInQueue = 1.4,
   vjustBlackAllowedModelTypes = -1.6, vjustColorAllowedModelTypes = -1.6,
   ...) {
+
+  # Avoiding CRAN check warnings
+  node <- selected <- candidate <- rankInQueue <- .I <- allowedModelTypes <-
+    allowedModelTypesSelected <- allowedModelTypesCandidate <- NULL
+
   tree <- PCMTree(fit$tree)
 
   treeRootInt <- PCMTreeNumTips(tree) + 1L
@@ -95,10 +102,10 @@ PlotRCPHistory <- function(
       })]
 
       dtCladePartition[
-        node%in%historyEntry$headQPR_Partition,
+        node %in% historyEntry$headQPR_Partition,
         allowedModelTypesSelected:=allowedModelTypes]
       dtCladePartition[
-        !(node%in%historyEntry$headQPR_Partition),
+        !(node %in% historyEntry$headQPR_Partition),
         allowedModelTypesCandidate:=allowedModelTypes]
 
       fitTablei <- RetrieveFittedModelsFromFitVectors(
@@ -112,13 +119,24 @@ PlotRCPHistory <- function(
       palette <- colorsForPartNodes[as.character(historyEntry$headQPR_Partition)]
       names(palette) <- as.character(PCMTreeGetRegimesForNodes(tree, nodes = as.integer(historyEntry$headQPR_Partition)))
 
-      ploti <- PCMTreePlot(tree, palette = palette, ...) %<+% as.data.frame(dtCladePartition) %<+% as.data.frame(remainingQueuei) +
+      ploti <- PCMTreePlot(tree, palette = palette, ...) %<+%
+        as.data.frame(dtCladePartition) %<+% as.data.frame(remainingQueuei) +
         geom_nodepoint(aes(shape=selected), size=sizeColorNodepoints, na.rm = TRUE) +
         geom_nodepoint(aes(shape=candidate), size=sizeGreyNodepoints, color = "grey", na.rm = TRUE) +
-        geom_text(aes(label=allowedModelTypesSelected), size=sizeColorAllowedModelTypes, vjust=vjustColorAllowedModelTypes) +
-        geom_text(aes(label=allowedModelTypesCandidate), color = "black", size=sizeBlackAllowedModelTypes, vjust=vjustBlackAllowedModelTypes) +
-        geom_text(aes(label=rankInQueue), color="black", size=sizeRankInQueue) +
-        ggtitle(paste0("(",i,") score=", round(fitTablei$score[[1]]), ", logLik=", round(fitTablei$logLik[[1]]), ", p=", fitTablei$df[[1]]))
+        geom_text(aes(label=allowedModelTypesSelected),
+                  size=sizeColorAllowedModelTypes,
+                  vjust=vjustColorAllowedModelTypes) +
+        geom_text(aes(label=allowedModelTypesCandidate),
+                  color = "black",
+                  size=sizeBlackAllowedModelTypes,
+                  vjust=vjustBlackAllowedModelTypes) +
+        geom_text(aes(label=rankInQueue),
+                  color="black",
+                  size=sizeRankInQueue) +
+        ggtitle(paste0("(",i,") score=",
+                       round(fitTablei$score[[1]]),
+                       ", logLik=", round(fitTablei$logLik[[1]]),
+                       ", p=", fitTablei$df[[1]]))
 
       ploti
     } else {
