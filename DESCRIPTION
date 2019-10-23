@@ -30,7 +30,8 @@ Suggests:
   knitr, 
   rmarkdown, 
   cowplot, 
-  BiocManager
+  BiocManager,
+  PCMBaseCpp
 Remotes: github::venelin/PCMFit
 RoxygenNote: 6.1.1
 ByteCompile: yes
